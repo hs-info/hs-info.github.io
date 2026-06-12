@@ -394,7 +394,7 @@ h3 {
 
 .interest-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12.8rem, 1fr));
   gap: 1rem;
 }
 
@@ -413,6 +413,10 @@ h3 {
 
 .interest-card:nth-child(4) {
   border-top-color: var(--gold);
+}
+
+.interest-card:nth-child(5) {
+  border-top-color: var(--teal-dark);
 }
 
 .interest-card p,
@@ -568,6 +572,11 @@ h3 {
 .tag.type-book {
   background: #ecf4ec;
   color: var(--green);
+}
+
+.tag.type-chapter {
+  background: #fff3db;
+  color: #7a4f11;
 }
 
 .tag.type-thesis {

@@ -13,7 +13,8 @@ with a searchable publication list, teaching history, group members, and contact
 
 ## Notes
 
-- The old website referenced 174 local paper/thesis links. 173 files were present and copied into this project.
+- The imported publication list contains 188 records: 157 articles, 30 chapters/proceedings, and 1 thesis.
+- All 201 local paper/thesis PDF links currently referenced by the site were found and copied into this project.
 - The missing legacy PDF `papers/yusupov2018.pdf` was omitted from its publication entry so the new page does not show a broken PDF button.
 - The About section links to `resume.pdf` for the full Resume/CV. Place that file beside `index.html` before publishing if it is not already present.
 - Open `index.html` in a browser. No build step is required.
