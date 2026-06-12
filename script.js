@@ -1126,7 +1126,13 @@ const publications = [
     "year": 2019,
     "type": "article",
     "venue": "Journal of Physics A: Mathematical and Theoretical 52 (5), 055303 (2019).",
-    "links": [],
+    "links": [
+      {
+        "label": "PDF",
+        "url": "papers/Yusupov_2019_J._Phys._A%3A_Math._Theor._52_055303.pdf",
+        "kind": "pdf"
+      }
+    ],
     "citation": "J. Yusupov, S. Rakhmanov, D. Matrasulov, and H Susanto. Quantum dynamics of a parity-time-symmetric kicked particle in a 1D box. Journal of Physics A: Mathematical and Theoretical 52 (5), 055303 (2019)."
   },
   {
