@@ -3041,6 +3041,243 @@ function typeLabel(type) {
   return labels[type] || type;
 }
 
+function bibtexEntryType(publication) {
+  if (publication.type === "thesis") return "phdthesis";
+
+  if (publication.type === "chapter") {
+    const venue = `${publication.venue} ${publication.title}`.toLowerCase();
+    return /proceedings|conference|workshop|proc\.|spie|aip|conf\.|symposium/.test(venue)
+      ? "inproceedings"
+      : "incollection";
+  }
+
+  return "article";
+}
+
+function bibtexAuthorList(authors) {
+  const cleaned = String(authors || "")
+    .replace(/\s+/g, " ")
+    .replace(/,\s*$/, "")
+    .trim();
+
+  if (!cleaned || /^\(/.test(cleaned)) return "";
+
+  return cleaned
+    .replace(/\s*,?\s+and\s+/g, ", ")
+    .split(/\s*,\s*/)
+    .flatMap((author) => author.split(/\s+and\s+/))
+    .map(formatBibtexAuthor)
+    .filter(Boolean)
+    .join(" and ")
+    .replace(/\s+and\s+and\s+/g, " and ");
+}
+
+function formatBibtexAuthor(author) {
+  const name = String(author || "")
+    .replace(/\s+/g, " ")
+    .replace(/,\s*$/, "")
+    .trim();
+
+  if (!name || /^\(/.test(name)) return "";
+  if (name.includes(",")) return name;
+
+  const parts = name.split(" ").filter(Boolean);
+  if (parts.length < 2) return name;
+
+  const particles = new Set(["al", "da", "de", "del", "der", "di", "du", "la", "le", "van", "von"]);
+  let surnameStart = parts.length - 1;
+
+  while (surnameStart > 0 && particles.has(parts[surnameStart - 1].toLowerCase())) {
+    surnameStart -= 1;
+  }
+
+  const family = parts.slice(surnameStart).join(" ");
+  const given = parts.slice(0, surnameStart).join(" ");
+  return `${family}, ${given}`;
+}
+
+function firstAuthorLastName(authors) {
+  const cleaned = bibtexAuthorList(authors);
+  if (!cleaned) return "susanto";
+
+  const firstAuthor = cleaned.split(/\s+and\s+/)[0].trim();
+  return firstAuthor.split(",")[0]
+    .normalize("NFKD")
+    .replace(/[^\p{L}\p{N}-]/gu, "")
+    .toLowerCase() || "susanto";
+}
+
+function bibtexKey(publication) {
+  const titleWords = String(publication.title || "")
+    .normalize("NFKD")
+    .replace(/[^\w\s-]/g, " ")
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((word) => word.length > 3)
+    .slice(0, 3)
+    .join("");
+
+  return `${firstAuthorLastName(publication.authors)}${publication.year}${titleWords || "publication"}`;
+}
+
+function bibtexValue(value) {
+  const greekTokens = [
+    ["φ", "\\phi"],
+    ["Φ", "\\Phi"],
+    ["π", "\\pi"],
+    ["κ", "\\kappa"],
+    ["α", "\\alpha"],
+    ["β", "\\beta"],
+    ["γ", "\\gamma"],
+    ["δ", "\\delta"],
+    ["λ", "\\lambda"],
+    ["ω", "\\omega"]
+  ];
+
+  const placeholders = new Map();
+  let text = String(value ?? "")
+    .replace(/[–—]/g, "--")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  greekTokens.forEach(([character, command], index) => {
+    const token = String.fromCharCode(0xe000 + index);
+    placeholders.set(token, `{$${command}$}`);
+    text = text.replaceAll(character, token);
+  });
+
+  text = text
+    .replace(/([{}#$%&_])/g, "\\$1")
+    .trim();
+
+  placeholders.forEach((replacement, token) => {
+    text = text.replaceAll(token, replacement);
+  });
+
+  return text;
+}
+
+function normalizeJournalName(journal) {
+  const cleaned = String(journal || "")
+    .replace(/\s+/g, " ")
+    .replace(/\s+,/g, ",")
+    .trim();
+
+  const expansions = [
+    [/^Phys\. Rev\. A$/i, "Physical Review A"],
+    [/^Phys\. Rev\. B$/i, "Physical Review B"],
+    [/^Phys\. Rev\. C$/i, "Physical Review C"],
+    [/^Phys\. Rev\. D$/i, "Physical Review D"],
+    [/^Phys\. Rev\. E$/i, "Physical Review E"],
+    [/^Phys\. Rev\. Lett\.$/i, "Physical Review Letters"],
+    [/^Nonlinear Dyn\.$/i, "Nonlinear Dynamics"],
+    [/^J\. Phys\. A: Mathematical and Theoretical$/i, "Journal of Physics A: Mathematical and Theoretical"],
+    [/^J\. Phys\. B: At\. Mol\. Opt\. Phys\.$/i, "Journal of Physics B: Atomic, Molecular and Optical Physics"],
+    [/^J\. Nonlinear Opt\. Phys\. Mater\.$/i, "Journal of Nonlinear Optical Physics and Materials"]
+  ];
+
+  const match = expansions.find(([pattern]) => pattern.test(cleaned));
+  return match ? match[1] : cleaned;
+}
+
+function publisherForJournal(journal) {
+  if (/^Physical Review/.test(journal)) return "APS";
+  if (/^SIAM /.test(journal)) return "SIAM";
+  return "";
+}
+
+function cleanBibtexPages(pages) {
+  return String(pages || "")
+    .replace(/\s*\(\d{4}\)\.?\s*$/g, "")
+    .replace(/[–—]/g, "--")
+    .replace(/\s+/g, "")
+    .replace(/\.$/, "")
+    .trim();
+}
+
+function parseArticleVenue(publication) {
+  const raw = String(publication.venue || "")
+    .replace(/\s+/g, " ")
+    .replace(/\s+,/g, ",")
+    .replace(/,\s+/g, ", ")
+    .trim();
+  const yearPattern = Number.isFinite(Number(publication.year)) ? String(publication.year) : "\\d{4}";
+  const withoutYear = raw
+    .replace(new RegExp(`\\s*\\(${yearPattern}\\)\\.?\\s*$`), "")
+    .replace(/\.$/, "")
+    .trim();
+
+  const patterns = [
+    /^(.+?)\s+20\d{2},\s*(\d+(?:-\d+)?)\s*\(([^)]+)\),?\s*(.+)$/,
+    /^(.+?)\s+(\d+(?:-\d+)?)\s*\(([^)]+)\),?\s*(.+)$/,
+    /^(.+?)\s+(\d+(?:-\d+)?)\s*,\s*(.+)$/
+  ];
+
+  let parsed = { journal: normalizeJournalName(raw) };
+
+  for (const pattern of patterns) {
+    const match = withoutYear.match(pattern);
+    if (!match) continue;
+
+    parsed = {
+      journal: normalizeJournalName(match[1]),
+      volume: match[2],
+      number: match[4] ? match[3] : "",
+      pages: cleanBibtexPages(match[4] || match[3])
+    };
+    break;
+  }
+
+  if (
+    parsed.journal &&
+    !parsed.number &&
+    /^Physical Review [A-Z]$/.test(parsed.journal) &&
+    /^\d{6}$/.test(parsed.pages || "")
+  ) {
+    parsed.number = String(Number(parsed.pages.slice(0, 2)));
+  }
+
+  parsed.publisher = publisherForJournal(parsed.journal);
+  return parsed;
+}
+
+function bibtexFor(publication) {
+  const entryType = bibtexEntryType(publication);
+  let fields;
+
+  if (entryType === "article") {
+    const venue = parseArticleVenue(publication);
+    fields = [
+      ["title", publication.title],
+      ["author", bibtexAuthorList(publication.authors)],
+      ["journal", venue.journal],
+      ["volume", venue.volume],
+      ["number", venue.number],
+      ["pages", venue.pages],
+      ["year", publication.year],
+      ["publisher", venue.publisher]
+    ];
+  } else {
+    const venueField = entryType === "phdthesis" ? "school" : "booktitle";
+    fields = [
+      ["title", publication.title],
+      ["author", bibtexAuthorList(publication.authors)],
+      [venueField, publication.venue],
+      ["year", publication.year]
+    ];
+  }
+
+  const pdfLink = (publication.links || []).find((link) => link.kind === "pdf" || link.label === "PDF");
+  if (pdfLink) fields.push(["url", pdfLink.url]);
+
+  const renderedFields = fields
+    .filter(([, value]) => String(value ?? "").trim())
+    .map(([key, value]) => `  ${key} = {${bibtexValue(value)}}`)
+    .join(",\n");
+
+  return `@${entryType}{${bibtexKey(publication)},\n${renderedFields}\n}`;
+}
+
 function publicationMatches(publication) {
   const haystack = [
     publication.title,
@@ -3081,7 +3318,7 @@ function renderPublicationLinks(publication) {
   });
 
   links.push(`
-            <button class="publication-copy" type="button" data-cite="${escapeHTML(publication.citation)}">
+            <button class="publication-copy" type="button" data-publication-id="${escapeHTML(publication.id)}">
               ${icons.copy}<span>Cite</span>
             </button>`);
 
@@ -3122,14 +3359,17 @@ function renderPublications() {
   emptyState.hidden = filtered.length > 0;
 
   document.querySelectorAll(".publication-copy").forEach((button) => {
-    button.addEventListener("click", () => copyCitation(button.dataset.cite));
+    button.addEventListener("click", () => {
+      const publication = publications.find((item) => item.id === button.dataset.publicationId);
+      if (publication) copyCitation(bibtexFor(publication));
+    });
   });
 }
 
 async function copyCitation(citation) {
   try {
     await navigator.clipboard.writeText(citation);
-    showToast("Citation copied.");
+    showToast("BibTeX copied.");
   } catch {
     const textArea = document.createElement("textarea");
     textArea.value = citation;
@@ -3140,7 +3380,7 @@ async function copyCitation(citation) {
     textArea.select();
     document.execCommand("copy");
     textArea.remove();
-    showToast("Citation copied.");
+    showToast("BibTeX copied.");
   }
 }
 
