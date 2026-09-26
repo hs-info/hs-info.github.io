@@ -1,10 +1,8 @@
-const DROPBOX_PAPERS_URL = "https://www.dropbox.com/scl/fo/awsuw89xve7q2r8zeslmo/ADNyEZP5SkJPVxwSVVZPQak?rlkey=st2dm4xkh5b1au1wdpx1bmmou";
-
 function externalPaperUrl(url) {
   if (!String(url).startsWith("papers/")) return url;
 
   const filename = String(url).slice("papers/".length).split("?")[0];
-  return `${DROPBOX_PAPERS_URL}&preview=${encodeURIComponent(filename)}&dl=0`;
+  return window.DROPBOX_PAPER_LINKS?.[filename] || url;
 }
 
 const publications = [
