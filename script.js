@@ -1,4 +1,45 @@
+const DROPBOX_PAPERS_URL = "https://www.dropbox.com/scl/fo/awsuw89xve7q2r8zeslmo/ADNyEZP5SkJPVxwSVVZPQak?rlkey=st2dm4xkh5b1au1wdpx1bmmou";
+
+function externalPaperUrl(url) {
+  if (!String(url).startsWith("papers/")) return url;
+
+  const filename = String(url).slice("papers/".length).split("?")[0];
+  return `${DROPBOX_PAPERS_URL}&preview=${encodeURIComponent(filename)}&dl=0`;
+}
+
 const publications = [
+  {
+    "id": "2026-multiprecision-computation-of-bright-and-dark-solitons",
+    "title": "Multiprecision computation of bright and dark solitons in the discrete nonlinear Schrödinger equation",
+    "authors": "R. Kusdiantara, F.T. Adriano, and H. Susanto",
+    "year": 2026,
+    "type": "article",
+    "venue": "Physics Letters A 597, 132170 (2026)",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "papers/1-s2.0-S037596012600842X-main.pdf",
+        "kind": "pdf"
+      }
+    ],
+    "citation": "R. Kusdiantara, F.T. Adriano, and H. Susanto. Multiprecision computation of bright and dark solitons in the discrete nonlinear Schrödinger equation. Physics Letters A 597, 132170 (2026)"
+  },
+  {
+    "id": "2026-is-there-an-accelerating-nonspreading-wave-packet",
+    "title": "Is there an accelerating nonspreading wave packet in the Schrödinger equation with higher even-order dispersions?",
+    "authors": "F.T. Adriano and H. Susanto",
+    "year": 2026,
+    "type": "article",
+    "venue": "Physics Letters A 598, 132195 (2026)",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "papers/1-s2.0-S0375960126008674-main.pdf",
+        "kind": "pdf"
+      }
+    ],
+    "citation": "F.T. Adriano and H. Susanto. Is there an accelerating nonspreading wave packet in the Schrödinger equation with higher even-order dispersions?. Physics Letters A 598, 132195 (2026)"
+  },
   {
     "id": "2026-discrete-equations-and-autotraveling-kinks-of-the-6-model",
     "title": "Discrete equations and autotraveling kinks of the φ^6 model",
@@ -17,7 +58,7 @@ const publications = [
   },
   {
     "id": "2026-estimation-of-the-parameters-of-q-gaussian-distributions-in",
-    "title": "Estimation of the parameters of q -Gaussian distributions in the standard map",
+    "title": "Estimation of the parameters of q-Gaussian distributions in the standard map",
     "authors": "Zulkarnain, H. Susanto, and C.G. Antonopoulos",
     "year": 2026,
     "type": "article",
@@ -165,15 +206,15 @@ const publications = [
     "authors": "U.M. Rifanti, L. Aryati, N. Susyanto, and H. Susanto",
     "year": 2026,
     "type": "article",
-    "venue": "An International Journal of Optimization and Control: Theories & Applications 113, 064204 (2026)",
+    "venue": "An International Journal of Optimization and Control: Theories & Applications 16 (4), 1273–1291 (2026)",
     "links": [
       {
         "label": "PDF",
-        "url": "papers/d4l3-yx9z.pdf",
+        "url": "papers/article_ijocta0261900751_bf7ec5.pdf",
         "kind": "pdf"
       }
     ],
-    "citation": "U.M. Rifanti, L. Aryati, N. Susyanto, and H. Susanto. Q-learning as a feedback control mechanism in deterministic systems. An International Journal of Optimization and Control: Theories & Applications 113, 064204 (2026)"
+    "citation": "U.M. Rifanti, L. Aryati, N. Susyanto, and H. Susanto. Q-learning as a feedback control mechanism in deterministic systems. An International Journal of Optimization and Control: Theories & Applications 16 (4), 1273–1291 (2026)"
   },
   {
     "id": "2026-reliability-of-numerical-rogue-wave-simulations",
@@ -229,7 +270,7 @@ const publications = [
     "authors": "Zulkarnain, H. Susanto, C.G. Antonopoulos, and K. Mu'tamar",
     "year": 2026,
     "type": "chapter",
-    "venue": "AIP Conference Proceedings 3389 , 020002 (2026).",
+    "venue": "AIP Conference Proceedings 3389, 020002 (2026).",
     "links": [
       {
         "label": "PDF",
@@ -3268,7 +3309,7 @@ function bibtexFor(publication) {
   }
 
   const pdfLink = (publication.links || []).find((link) => link.kind === "pdf" || link.label === "PDF");
-  if (pdfLink) fields.push(["url", pdfLink.url]);
+  if (pdfLink) fields.push(["url", externalPaperUrl(pdfLink.url)]);
 
   const renderedFields = fields
     .filter(([, value]) => String(value ?? "").trim())
@@ -3312,7 +3353,7 @@ function renderPublicationLinks(publication) {
   const links = (publication.links || []).map((link) => {
     const icon = link.kind === "pdf" ? icons.file : icons.external;
     return `
-            <a class="publication-link" href="${escapeHTML(link.url)}" target="_blank" rel="noreferrer">
+            <a class="publication-link" href="${escapeHTML(externalPaperUrl(link.url))}" target="_blank" rel="noreferrer">
               ${icon}<span>${escapeHTML(link.label)}</span>
             </a>`;
   });
@@ -3429,5 +3470,8 @@ navLinks.querySelectorAll("a").forEach((link) => {
 });
 
 currentYear.textContent = new Date().getFullYear();
+document.querySelectorAll('a[href^="papers/"]').forEach((link) => {
+  link.href = externalPaperUrl(link.getAttribute("href"));
+});
 renderYearOptions();
 renderPublications();
