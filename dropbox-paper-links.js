@@ -223,5 +223,7 @@ window.DROPBOX_PAPER_LINKS = Object.freeze({
   "Variational-approximations.pdf": "https://www.dropbox.com/scl/fi/fzlkcngkqmhkb7jh5p9s9/Variational-approximations.pdf?rlkey=u7c40y72o80bnez1ioopsrkfu&dl=0",
   "x5m6-wqkm.pdf": "https://www.dropbox.com/scl/fi/do87zvnvzw0ud2m7wp9uh/x5m6-wqkm.pdf?rlkey=wozxzhohkmu7z02dijpgpfdz3&dl=0",
   "YuslenitaMuda_thesis.pdf": "https://www.dropbox.com/scl/fi/8w416ab1m2svn0klu7e99/YuslenitaMuda_thesis.pdf?rlkey=ilzzco0p2588gq5kfwy6edy4u&dl=0",
-  "Yusupov_2019_J._Phys._A%3A_Math._Theor._52_055303.pdf": "https://www.dropbox.com/scl/fi/42flljf6d7tqnpqyfurh4/Yusupov_2019_J._Phys._A-3A_Math._Theor._52_055303.pdf?rlkey=y3sw48bmxns3tf234n8q8shzs&dl=0"
+  "Yusupov_2019_J._Phys._A%3A_Math._Theor._52_055303.pdf": "https://www.dropbox.com/scl/fi/42flljf6d7tqnpqyfurh4/Yusupov_2019_J._Phys._A-3A_Math._Theor._52_055303.pdf?rlkey=y3sw48bmxns3tf234n8q8shzs&dl=0",
+  "1-s2.0-S0378475426004209-main.pdf": "https://www.dropbox.com/scl/fi/dxnip3hedtv8td6ibjl37/1-s2.0-S0378475426004209-main.pdf?rlkey=l8ccna8vi5r5pq7scemmi0d6u&dl=0",
+  "1-s2.0-S0960077926013846-main.pdf": "https://www.dropbox.com/scl/fi/qcqxf3551a9g9h6603rz6/1-s2.0-S0960077926013846-main.pdf?rlkey=628vogz6ye7bd5yyrqkxcb8kj&dl=0"
 });

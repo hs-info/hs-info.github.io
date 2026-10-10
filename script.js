@@ -7,6 +7,38 @@ function externalPaperUrl(url) {
 
 const publications = [
   {
+    "id": "2027-ecological-mechanisms-and-bifurcation-dynamics-in-a-mathematical-model-of-african-wild-dogs",
+    "title": "Ecological mechanisms and bifurcation dynamics in a mathematical model of African wild dogs",
+    "authors": "L. Owen, H. Fahlena, H. Susanto, R. Kusdiantara, G. Putra, and E. Soewono",
+    "year": 2027,
+    "type": "article",
+    "venue": "Mathematics and Computers in Simulation 252, 155–173 (2027)",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "papers/1-s2.0-S0378475426004209-main.pdf",
+        "kind": "pdf"
+      }
+    ],
+    "citation": "L. Owen, H. Fahlena, H. Susanto, R. Kusdiantara, G. Putra, and E. Soewono. Ecological mechanisms and bifurcation dynamics in a mathematical model of African wild dogs. Mathematics and Computers in Simulation 252, 155–173 (2027)"
+  },
+  {
+    "id": "2026-trajectory-based-functionals-for-detecting-exponential-growth-in-dynamical-systems",
+    "title": "Trajectory-based functionals for detecting exponential growth in dynamical systems",
+    "authors": "U.M. Rifanti, L. Aryati, N. Susyanto, and H. Susanto",
+    "year": 2026,
+    "type": "article",
+    "venue": "Chaos, Solitons & Fractals 213, 119243 (2026)",
+    "links": [
+      {
+        "label": "PDF",
+        "url": "papers/1-s2.0-S0960077926013846-main.pdf",
+        "kind": "pdf"
+      }
+    ],
+    "citation": "U.M. Rifanti, L. Aryati, N. Susyanto, and H. Susanto. Trajectory-based functionals for detecting exponential growth in dynamical systems. Chaos, Solitons & Fractals 213, 119243 (2026)"
+  },
+  {
     "id": "2026-multiprecision-computation-of-bright-and-dark-solitons",
     "title": "Multiprecision computation of bright and dark solitons in the discrete nonlinear Schrödinger equation",
     "authors": "R. Kusdiantara, F.T. Adriano, and H. Susanto",
